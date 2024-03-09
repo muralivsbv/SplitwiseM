@@ -11,4 +11,8 @@ public class UserRepository {
     public UserRepository() {
         userList = new ArrayList<>();
     }
+
+    public void addUser         (User user) {
+        userList.add(user);
+    }
 }

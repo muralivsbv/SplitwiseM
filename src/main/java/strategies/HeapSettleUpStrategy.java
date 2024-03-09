@@ -2,6 +2,7 @@ package strategies;
 
 import dtos.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -9,7 +10,10 @@ import java.util.PriorityQueue;
 public class HeapSettleUpStrategy implements SettleUpStrategy{
     @Override
     public List<Transaction> settleUpGroup(Map<String, Integer> map) {
+        // declare a return type of trasactionList
         // take couple of heaps of pair type which carries the username and also the amount that he owes/receives
+
+        List<Transaction> transactionList = new ArrayList<>();
 
         PriorityQueue<Pair>  receivers = new PriorityQueue<Pair>();
         PriorityQueue<Pair>   givers = new PriorityQueue<Pair>();
@@ -33,10 +37,17 @@ public class HeapSettleUpStrategy implements SettleUpStrategy{
             Pair receiver = receivers.remove();
             Pair giver = givers.remove();
 
-            if(receiver.amount > giver.amount){
+            if(receiver.amount >= giver.amount){
                 receivers.add(new Pair(receiver.name,receiver.amount-giver.amount));
+                transactionList.add(new Transaction(giver.name,receiver.name, giver.amount));
+            }
+            else if(receiver.amount < giver.amount){
+                givers.add(new Pair(giver.name,giver.amount-receiver.amount));
+                transactionList.add(new Transaction(giver.name,receiver.name, receiver.amount));
             }
         }
+
+        return transactionList;
 
 
         

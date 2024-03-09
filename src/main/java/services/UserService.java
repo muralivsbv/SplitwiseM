@@ -38,12 +38,13 @@ public class UserService {
 
         // the 5 steps are nothing but the group settling , last 6th step is filtering out for particular user
 
+        // create a map and keep track of the extra amount of users in that map for expenses for final settlement
+        Map<String,Integer> extraAmountMap = new HashMap<>();
         // 1.get all the group expenses based on the groupName , for this we need group repository , instantiate it
 
         List<Expense> expenses = groupRepository.findExpensesByGroup(groupName);
 
-        // create a map and keep track of the extra amount of users in that map for particular expense for final settlement
-        Map<String,Integer> extraAmountMap = new HashMap<>();
+
         // 2. filter the Normal expenses as we have dummy expense also
 
            for(Expense expense: expenses){

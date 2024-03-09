@@ -8,8 +8,14 @@ import java.util.List;
 public class UserExpenseRepository {
     private List<UserExpense> userExpenseList;
 
+
+
     public UserExpenseRepository() {
         userExpenseList = new ArrayList<>();
+    }
+
+    public void addUserExpense(UserExpense userExpense){
+        userExpenseList.add(userExpense);
     }
 
     // with expense description (eg : e1 in otes) taking as input and getting that particular expense related all user

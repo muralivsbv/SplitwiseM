@@ -13,6 +13,10 @@ public class GroupRepository {
         groupList = new ArrayList<>();
     }
 
+    public void addGroup(Group group){
+        groupList.add(group);
+    }
+
     public List<Expense> findExpensesByGroup(String groupName) {
          for(Group group : groupList){
              if(group.getName().equalsIgnoreCase(groupName)){

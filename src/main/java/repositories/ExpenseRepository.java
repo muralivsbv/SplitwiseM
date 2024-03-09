@@ -11,4 +11,8 @@ public class ExpenseRepository {
     public ExpenseRepository() {
         expenseList = new ArrayList<>();
     }
+
+    public void addExpense(Expense expense){
+        expenseList.add(expense);
+    }
 }
