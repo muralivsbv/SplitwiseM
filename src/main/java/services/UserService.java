@@ -45,7 +45,9 @@ public class UserService {
         // create a map and keep track of the extra amount of users in that map for particular expense for final settlement
         Map<String,Integer> extraAmountMap = new HashMap<>();
         // 2. filter the Normal expenses as we have dummy expense also
+
            for(Expense expense: expenses){
+
                if(expense.getExpenseType().equals(ExpenseType.NORMAL)){
                    // 3. for each normal expense get the UserExpenses
                    List<UserExpense> userExpensesList
