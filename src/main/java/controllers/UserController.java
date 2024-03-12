@@ -18,4 +18,9 @@ public class UserController {
     public List<Transaction> settleUser(String userName, String groupName){
            return userService.settleUser(userName,groupName);
     }
+
+    // instead of creating groupController and groupService using userService itself for time being
+    public List<Transaction> settleGroup(String groupName){
+        return userService.settleGroup(groupName);
+    }
 }

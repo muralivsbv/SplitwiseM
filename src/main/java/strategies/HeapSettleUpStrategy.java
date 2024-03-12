@@ -64,10 +64,11 @@ public class HeapSettleUpStrategy implements SettleUpStrategy{
         }
 
         @Override
+        // this code is for minheap strategy return the list in ascending order so min comes first
         public int compareTo(Object o) {
             Pair other = (Pair) o;
             if(this.amount <= other.amount){
-                return -1;
+                return -1;   // if we revers these negative as postive the the maxheap strategy will be implemented
             }
             return 1;
         }

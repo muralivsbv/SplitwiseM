@@ -29,60 +29,9 @@ public class UserService {
 
     public List<Transaction> settleUser(String userName, String groupName) {
 
-       /* 1. get all the group expenses based on the groupName
-          2. filter the Normal expenses as we have dummy expense also
-          3. for each normal expense get the UserExpenses
-          4. Iterate all the userExpenses of an expense (single expense)and find the extra amounts of every user
-          5. pass the extraamountsMap to the HeapStrategy to get the list<trasactions>
-          6. filter out the list<trasactions> for particular user and return that */
+        List<Transaction> transactions = getTransactionsForGroup(groupName);
 
-        // the 5 steps are nothing but the group settling , last 6th step is filtering out for particular user
-
-        // create a map and keep track of the extra amount of users in that map for expenses for final settlement
-        Map<String,Integer> extraAmountMap = new HashMap<>();
-        // 1.get all the group expenses based on the groupName , for this we need group repository , instantiate it
-
-        List<Expense> expenses = groupRepository.findExpensesByGroup(groupName);
-
-
-        // 2. filter the Normal expenses as we have dummy expense also
-
-           for(Expense expense: expenses){
-
-               if(expense.getExpenseType().equals(ExpenseType.NORMAL)){
-                   // 3. for each normal expense get the UserExpenses
-                   List<UserExpense> userExpensesList
-                           = userExpenseRepository.findUserExpensesByExpense(expense.getDescription());
-                   //4. Iterate all the userExpenses of an expense and find the extra amounts of every user
-
-                   for(UserExpense userExpence : userExpensesList){
-                       // temp variable to make code looks simple , as a substitute
-                         String name = userExpence.getUser().getName();
-                         if(!extraAmountMap.containsKey(name)){
-                             extraAmountMap.put(name,0);
-                         }
-
-                        // Based on the UserExpense type we need to add or subtract the userExpense amount to the
-                        // map entry of that particular user and update that entry in map with a new amount again
-                        Integer amount = extraAmountMap.get(name);
-                        if(userExpence.getUserExpenseType().equals(UserExpenseType.PAID_BY)){
-                            amount += userExpence.getAmount();
-                        }else if (userExpence.getUserExpenseType().equals(UserExpenseType.HAD_TO_PAY)){
-                            amount -= userExpence.getAmount();
-                        }
-
-                       extraAmountMap.put(name,amount);
-
-                   }
-               }
-           }
-
-           // 5. pass the extraamountsMap to the HeapStrategy to get the list<trasactions>
-           // now the Map is prepared with details of whom has to owe/receive amounts user wise in the given group
-           // now we need to find the transactions using the map , by applying the Heap strategy
-
-          List<Transaction> transactions = settleUpStrategy.settleUpGroup(extraAmountMap);
-         // 6. filter out the list<trasactions> for particular user and return that
+        // 6. filter out the list<trasactions> for particular user and return that
          // As we have all the trasactions list now we can filter them by user required by checing if that
          // particular user is involved in FROM/TO in the trasaction DTO
 
@@ -97,4 +46,70 @@ public class UserService {
 
 
     }
+
+    //settle group calls a method to get transactions for the group and return them
+    public List<Transaction> settleGroup(String groupName) {
+        return getTransactionsForGroup(groupName);
+    }
+
+    //getTransactionsForGroup
+    private List<Transaction> getTransactionsForGroup(String groupName) {
+    /* 1. get all the group expenses based on the groupName
+       2. filter the Normal expenses as we have dummy expense also
+       3. for each normal expense get the UserExpenses
+       4. Iterate all the userExpenses of an expense (single expense)and find the extra amounts of every user
+       5. pass the extraamountsMap to the HeapStrategy to get the list<trasactions>
+       6. filter out the list<trasactions> for particular user and return that */
+
+        // the 5 steps are nothing but the group settling , last 6th step is filtering out for particular user
+
+        // create a map and keep track of the extra amount of users in that map for expenses for final settlement
+        Map<String,Integer> extraAmountMap = new HashMap<>();
+        // 1.get all the group expenses based on the groupName , for this we need group repository , instantiate it
+
+        List<Expense> expenses = groupRepository.findExpensesByGroup(groupName);
+
+
+        // 2. filter the Normal expenses as we have dummy expense also
+
+        for(Expense expense: expenses){
+
+            if(expense.getExpenseType().equals(ExpenseType.NORMAL)){
+                // 3. for each normal expense get the UserExpenses
+                List<UserExpense> userExpensesList
+                        = userExpenseRepository.findUserExpensesByExpense(expense.getDescription());
+                //4. Iterate all the userExpenses of an expense and find the extra amounts of every user
+
+                for(UserExpense userExpence : userExpensesList){
+                    // temp variable to make code looks simple , as a substitute
+                      String name = userExpence.getUser().getName();
+                      if(!extraAmountMap.containsKey(name)){
+                          extraAmountMap.put(name,0);
+                      }
+
+                     // Based on the UserExpense type we need to add or subtract the userExpense amount to the
+                     // map entry of that particular user and update that entry in map with a new amount again
+                     Integer amount = extraAmountMap.get(name);
+                     if(userExpence.getUserExpenseType().equals(UserExpenseType.PAID_BY)){
+                         amount += userExpence.getAmount();
+                     }else if (userExpence.getUserExpenseType().equals(UserExpenseType.HAD_TO_PAY)){
+                         amount -= userExpence.getAmount();
+                     }
+
+                    extraAmountMap.put(name,amount);
+
+                }
+            }
+        }
+
+        // 5. pass the extraamountsMap to the HeapStrategy to get the list<trasactions>
+        // now the Map is prepared with details of whom has to owe/receive amounts user wise in the given group
+        // now we need to find the transactions using the map , by applying the Heap strategy
+
+        // this list contains the complete transactions list for all the users
+        List<Transaction> transactions = settleUpStrategy.settleUpGroup(extraAmountMap);
+        return transactions;
+    }
+
+
 }

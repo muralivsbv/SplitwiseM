@@ -50,9 +50,12 @@ public class Runner {
 
         //Creating expenses for the group
         Expense dinner_expense = new Expense("Dinner",6000, ExpenseType.NORMAL);
+        Expense room_expense = new Expense("room",9000, ExpenseType.NORMAL);
+
         // here only one expense but still if we have mutiple expenses then we need to make them as list and pass to the group
         ArrayList<Expense> goaExpenses = new ArrayList<>();
         goaExpenses.add(dinner_expense);
+        goaExpenses.add(room_expense);
 
         //setting userlist and expenselist to the group
         goaGroup.setUsers(goaGuys);
@@ -68,6 +71,15 @@ public class Runner {
         UserExpense uE5 = new UserExpense(sanjay, dinner_expense, 2000, UserExpenseType.HAD_TO_PAY);
 
         UserExpense uE6 = new UserExpense(abhi, dinner_expense, 6000, UserExpenseType.PAID_BY);
+
+        UserExpense uE7 = new UserExpense(abhi,   room_expense, 3000, UserExpenseType.HAD_TO_PAY);
+        UserExpense uE8 = new UserExpense(murali, room_expense, 3000, UserExpenseType.HAD_TO_PAY);
+        UserExpense uE9 = new UserExpense(raghu,  room_expense, 3000, UserExpenseType.HAD_TO_PAY);
+
+        UserExpense uE10 = new UserExpense(abhi, room_expense, 4000, UserExpenseType.PAID_BY);
+        UserExpense uE11 = new UserExpense(deepak, room_expense, 5000, UserExpenseType.PAID_BY);
+
+
 
         // We have created users,group,expenses,userexpenses and all now as we dont have the all controllers
         // to add data to respective repositories
@@ -91,6 +103,13 @@ public class Runner {
         userExpenseRepository.addUserExpense(uE5);
         userExpenseRepository.addUserExpense(uE6);
 
+        userExpenseRepository.addUserExpense(uE7);
+        userExpenseRepository.addUserExpense(uE8);
+        userExpenseRepository.addUserExpense(uE9);
+        userExpenseRepository.addUserExpense(uE10);
+        userExpenseRepository.addUserExpense(uE11);
+
+
         // after preparing all the required repositiores we need to create an instance of
         // UserController ->Needs an instance of UserService -> needs the instances of repositories/Heap Strategy
 
@@ -102,9 +121,9 @@ public class Runner {
 //                                       groupRepository,userExpenseRepository,new HeapSettleUpStrategy()
 //                                  ));
 
-        List<Transaction> transactionList = userController.settleUser("abhi", "goa-Trip");
-
-        // Transactiopn should be there where abhi is involved
+      //  List<Transaction> transactionList = userController.settleUser("murali", "goa-Trip");
+       List<Transaction> transactionList = userController.settleGroup("goa-Trip");
+        // Transactiopn should be there where <input given in above calls> is involved
         System.out.println(transactionList);
 
 //        Expected output for above input
